@@ -1,0 +1,29 @@
+body
+{
+    margin: 0px;
+    background: lightgray;
+}
+#WorkGround 
+{
+    position: relative;
+    width: 100%;
+    height: 2000px;
+    overflow: auto;
+}
+#WorkGround div
+{
+    position:relative;
+    width:800px;
+    height:600px;
+    box-shadow: 0 0 15px -3px rgba(0, 0, 0, 0.15);
+    margin: 0 auto;
+}
+.layer
+{
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    margin: 0px;
+    padding: 0px;
+}
+

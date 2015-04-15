@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script type="text/javascript" src="tools.js" ></script>
+        <script type="text/javascript" src="history.js" ></script>
+        <script type="text/javascript" src="keyMapper.js" ></script>
+        <script type="text/javascript" src="application.js" ></script>
+    </head>
+ <input type="file" id="file">
+        <input type="range" id="range"  min="1" max="255" step="5">
+
+        <script>
+
+            Application.Init();
+            Application.NewFile(800, 600, "");
+
+            var rangeLoader = document.getElementById('range');
+
+            $("#range").on("mousedown", function () {
+                $(this).on("mousemove", function () {
+                    Application.LayerAlpha(this.value);
+                })
+
+            });
+            $("#range").on("mouseup", function () {
+                
+                Application.ActiveFile.History.level++;
+                $(this).off("mousedown")
+            });
+            $("#range").change(function (e) {
+                Application.LayerAlpha(this.value);
+            });
+            
+            var imageLoader = document.getElementById('file');
+            imageLoader.addEventListener('change', handleImage, false);
+            function handleImage(event) {
+                event = event || window.event;
+                var reader = new FileReader();
+
+                reader.readAsDataURL(event.target.files[0]);
+                reader.onload = function (e) {
+                    e = e || window.event;
+                    var image = new Image();
+                    image.onload = function () {
+                        //нарисуем фотку
+                        // Application.WorkGround.UI.drawImage(image, 65, 110, image.width, image.height);
+                        Application.OpenFile(image, "filename");
+                    };
+                    image.src = e.target.result;
+                }
+            }
+        </script>
+</html>
