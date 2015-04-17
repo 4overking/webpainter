@@ -1,10 +1,22 @@
-$(document).on("keydown", keyMapper);
-//$(document).on("contextmenu ", keyMapper);
-function keyMapper(event)
+document.onkeydown = keyMapperDown;
+document.onkeyup = keyMapperUp;
+
+function keyMapperDown(event)
 {
-    event = event || window.event
+    event = event || window.event;
     event.preventDefault();
     event.stopPropagation();
+    /***************Handle Application.State.Buttons*******************/
+    if(event.ctrlKey)
+        Application.State.CtrlPressed = true;
+    if(event.altKey)
+        Application.State.AltPressed = true;
+    if(event.keyCode == 32)
+        Application.State.SpacePressed = true;
+    if(event.keyCode == 16)
+        Application.State.ShiftPressed = true;
+    /************************END**************************************/
+    
     if (event.keyCode == 89 && event.ctrlKey)
         //Ctrl+Y
         Application.History.Redo();
@@ -20,22 +32,20 @@ function keyMapper(event)
 
    // console.log(event.keyCode);
 }
-function contextMenu (event)
-{
-    event = event || window.event
-    event.preventDefault();
-    event.stopPropagation();
-    console.log("rightClick")
-}
-var keysMap =
-        {
-            "AltZ": function () {
-            },
-            "CtrlZ": function () {
-            },
-            "Space": function () {
-                console.log("space");
-            },
-        }
 
+function keyMapperUp (event)
+{
+    event = event || window.event;
+        /***************Handle Application.State.Buttons*******************/
+    if(event.ctrlKey)
+        Application.State.CtrlPressed = false;
+    if(event.altKey)
+        Application.State.AltPressed = false;
+    if(event.keyCode == 32)
+        Application.State.SpacePressed = false;
+    if(event.keyCode == 16)
+        Application.State.ShiftPressed = false;
+    /************************END**************************************/
+    
+}
 

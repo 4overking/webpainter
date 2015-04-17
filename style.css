@@ -26,4 +26,9 @@ body
     margin: 0px;
     padding: 0px;
 }
-
+#mouseHelper
+{
+    position: fixed;
+    border: 1px solid lightgray;
+    border-radius: 2px;
+}

@@ -7,6 +7,7 @@ Application =
             ActiveFile: false,
             ActiveLayer: false,
             ActiveLayerContext: false,
+            ActiveTool: new ITool,
             layerCouter: 0,
             Init: function ()
             {
@@ -217,42 +218,42 @@ Application =
                             var file = Application.ActiveFile;
                             var fileLayers = file.getElementsByClassName('layer');
                             console.log(level.isNewLayer || level.isNewLayerPosition);
-                            for(var i=fileLayers.length;i>0;i--)
-                               {
-                                   file.History.heap.appendChild(fileLayers[i-1]);
-                               }
-                               for (var i in stack)
-                               {
-                                    var newLayer = stack[i];
-                                      file.appendChild(newLayer);
-                               }
-                             /*for (var i in fileLayers)
+                            for (var i = fileLayers.length; i > 0; i--)
                             {
-                                var layerPosition = find(fileLayers, layer);
-                                if (layerPosition < 0)
-                                {
-                                    //get from heap
-                                    //console.log("get from heap");
-                                }
-                                else if (layerPosition !== parseInt(i))
-                                {
-
-                                    //moved layer
-                                  //  console.log("moved layer");
-                                }
-                                else
-                                {
-
-                                   // console.log("all OK");//что-то всё Слишком ОК
-                                }
-                                    Application.ActiveFile.History.heap.appendChild(fileLayers[i]);
-                                    Application.ActiveFile.appendChild(layer);
-                            }*/
-                                                        //СЛОИИИ
+                                file.History.heap.appendChild(fileLayers[i - 1]);
+                            }
+                            for (var i in stack)
+                            {
+                                var newLayer = stack[i];
+                                file.appendChild(newLayer);
+                            }
+                            /*for (var i in fileLayers)
+                             {
+                             var layerPosition = find(fileLayers, layer);
+                             if (layerPosition < 0)
+                             {
+                             //get from heap
+                             //console.log("get from heap");
+                             }
+                             else if (layerPosition !== parseInt(i))
+                             {
+                             
+                             //moved layer
+                             //  console.log("moved layer");
+                             }
+                             else
+                             {
+                             
+                             // console.log("all OK");//что-то всё Слишком ОК
+                             }
+                             Application.ActiveFile.History.heap.appendChild(fileLayers[i]);
+                             Application.ActiveFile.appendChild(layer);
+                             }*/
+                            //СЛОИИИ
                             //проверку на существование слоя и ЕГО УДАЛЕНИЕ!!!!
                             var ctx = level.layer.getContext("2d");
                             var data = level.layerData;
-                           ctx.putImageData(data, 0, 0);
+                            ctx.putImageData(data, 0, 0);
                         }
 
                     },
@@ -274,6 +275,20 @@ Application =
                         {
                             return Math.floor(Math.random() * (max - min + 1)) + min;
                         }
+
+                    },
+            State:
+                    {
+                        CtrlPressed: false,
+                        AltPressed: false,
+                        SpacePressed: false,
+                        ShiftPressed: false,
+                        /*mouse*/
+                        LeftPressed: false,
+                        RightPressed: false,
+                        ThirdPressed: false,
+                        StatXY: [],
+                        EndXY: []
 
                     },
             TestDraw: function (edge) {
