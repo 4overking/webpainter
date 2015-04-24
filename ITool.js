@@ -1,19 +1,31 @@
 //на эти методы навесить обработчики окна и обработчики инструментов
-function  ITool () {
-    this.OnMousemoveCanvasMouseKeyUp =
-    this.OnMousemoveWorkSpaceMouseKeyUp =
-    this.OnMousemoveCanvasMouseKeyDown =
-    this.OnMousemoveWorkSpaceMouseKeyDown =
-    
-    this.OnMousemoveCanvasMouse2KeyUp =
-    this.OnMousemoveWorkSpaceMouse2KeyUp =
-    this.OnMousemoveCanvasMouseKey2Down =
-    this.OnMousemoveWorkSpaceMouse2KeyDown =
-    
-    this.OnMousemoveCanvasMouse3KeyUp =
-    this.OnMousemoveWorkSpaceMouse3KeyUp =
-    this.OnMousemoveCanvasMouse3KeyDown =
-    this.OnMousemoveWorkSpaceMouse3KeyDown = function(e){
-        //console.log(event);
-    };
+function  ITool() {
+    if (window.Tools === undefined) {
+        Tools = [];
+    }
+    Tools.push(this);
+    this.OnCanvasMouseKeyUp =
+            this.OnWorkSpaceMouseKeyUp =
+            this.OnCanvasMouseKeyDown =
+            this.OnWorkSpaceMouseKeyDown =
+            this.OnCanvasMouse2KeyUp =
+            this.OnWorkSpaceMouse2KeyUp =
+            this.OnCanvasMouseKey2Down =
+            this.OnWorkSpaceMouse2KeyDown =
+            this.OnCanvasMouse3KeyUp =
+            this.OnWorkSpaceMouse3KeyUp =
+            this.OnCanvasMouse3KeyDown =
+            this.OnWorkSpaceMouse3KeyDown = 
+            
+            
+            this.OnMousemoveWorkSpaceMouseKeyDown =
+            this.OnMousemoveCanvasMouseKeyDown =
+            this.OnMousemoveWorkSpaceMouse2KeyDown =
+            this.OnMousemoveCanvasMouse2KeyDown =
+            this.OnMousemoveWorkSpaceMouse3KeyDown =
+            this.OnMousemoveCanvasMouse3KeyDown 
+            = function (e) {
+                //console.log(event);
+            };
+    this.Name = "toolNo_"+Tools.length;
 }

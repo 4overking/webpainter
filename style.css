@@ -9,6 +9,18 @@ body
     width: 100%;
     height: 2000px;
     overflow: auto;
+    top: 50px;
+}
+
+#tools{
+    position: fixed;
+    width: 50px;
+    height: 300px;
+    right: 10px;
+    top: 50px;
+    background: darkgray;
+    opacity: 7;
+    z-index: 2;
 }
 #WorkGround div
 {
@@ -31,4 +43,96 @@ body
     position: fixed;
     border: 1px solid lightgray;
     border-radius: 2px;
+}
+/****************************MENU BLOCK*************************/
+#mainMenu
+{
+    position: fixed;
+    width: 100%;
+    height: 28px;
+    background: darkgray;
+    opacity: 7;
+    z-index: 2;
+    top: 0;
+font-family: Helvetica, sans-serif;
+font-size: 16px;
+}
+
+#mainMenu ul
+{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    margin: 0;  
+}
+
+#mainMenu ul li
+{
+    display: block;
+    position: relative;
+    float: left;
+}
+
+#mainMenu li ul
+{
+    display: none;
+}
+
+#mainMenu ul li a 
+{
+    display: block;
+    text-decoration: none;
+    color: black;
+    padding: 5px 15px 5px 15px;
+    background: darkgray;
+    margin-left: 0;
+    white-space: nowrap;
+}
+#mainMenu ul li ul li a
+{
+    display: block;
+    text-decoration: none;
+    color: black;
+    padding: 5px 15px 5px 15px;
+    background: #2C5463;
+    margin-left: 0;
+    white-space: nowrap;
+    width: 100px;
+    font-size: 16px;
+}
+
+#mainMenu ul li a:hover 
+{
+    background: gray;
+}
+
+#mainMenu li:hover ul 
+{
+    display: block;
+    position: absolute;
+}
+
+#mainMenu li:hover li
+{
+    float: none;
+    font-size: 11px;
+}
+
+#mainMenu li:hover a 
+{
+    background: gray;
+}
+
+#mainMenu li:hover li a:hover 
+{
+    background: #5e5e5e;
+}
+/*************************tools ******************************/
+.tool{
+    width: 25px;
+    height: 25px;
+    margin: 5px;
+    border-radius: 2px;
+    background: white;
+    border: 1px solid black;
 }

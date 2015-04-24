@@ -14,25 +14,25 @@ function mouseDownKey(event) {
     switch (event.which) {
         case 1 :
             if (target === WG)
-                tool.OnMousemoveWorkSpaceMouseKeyDown(event);
+                tool.OnWorkSpaceMouseKeyDown(event);
             else if (target.className === "layer")
-                tool.OnMousemoveCanvasMouseKeyDown(event);
+                tool.OnCanvasMouseKeyDown(event);
             //console.log(event.offsetX, event.offsetY);
             Application.State.LeftPressed = true;
             break;
         case 2 :
             if (target === WG)
-                tool.OnMousemoveWorkSpaceMouse2KeyDown(event);
+                tool.OnWorkSpaceMouse2KeyDown(event);
             else if (target.className === "layer")
-                tool.OnMousemoveCanvasMouseKey2Down(event);
+                tool.OnCanvasMouseKey2Down(event);
 
             Application.State.ThirdPressed = true;
             break;
         case 3 :
             if (target === WG)
-                tool.OnMousemoveWorkSpaceMouse3KeyDown(event);
+                tool.OnWorkSpaceMouse3KeyDown(event);
             else if (target.className === "layer")
-                tool.OnMousemoveCanvasMouse3KeyDown(event);
+                tool.OnCanvasMouse3KeyDown(event);
 
             Application.State.RightPressed = true;
             break;
@@ -49,25 +49,25 @@ function mouseUpKey(event) {
     switch (event.which) {
         case 1 :
             if (target === WG)
-                tool.OnMousemoveWorkSpaceMouseKeyUp(event);
+                tool.OnWorkSpaceMouseKeyUp(event);
             else if (target.className === "layer")
-                tool.OnMousemoveCanvasMouseKeyUp(event);
+                tool.OnCanvasMouseKeyUp(event);
 
             Application.State.LeftPressed = false;
             break;
         case 2 :
             if (target === WG)
-                tool.OnMousemoveWorkSpaceMouse2KeyUp(event);
+                tool.OnWorkSpaceMouse2KeyUp(event);
             else if (target.className === "layer")
-                ctool.OnMousemoveCanvasMouse2KeyUp(event);
+                ctool.OnCanvasMouse2KeyUp(event);
 
             Application.State.ThirdPressed = false;
             break;
         case 3 :
             if (target === WG)
-                tool.OnMousemoveWorkSpaceMouse3KeyUp(event);
+                tool.OnWorkSpaceMouse3KeyUp(event);
             else if (target.className === "layer")
-                tool.OnMousemoveCanvasMouse3KeyUp(event);
+                tool.OnCanvasMouse3KeyUp(event);
 
             Application.State.RightPressed = false;
             break;
@@ -76,8 +76,28 @@ function mouseUpKey(event) {
 }
 function mouseMove(event) {
     event = event || window.event;
-    mouseHelper(event);
-    // console.log(event);
+    var target = event.toElement;
+    var WG = Application.WorkGround;
+    var tool = Application.ActiveTool;
+
+    if (Application.State.LeftPressed) {
+        if (target === WG)
+            tool.OnMousemoveWorkSpaceMouseKeyDown(event);
+        else if (target.className === "layer")
+            tool.OnMousemoveCanvasMouseKeyDown(event);
+    }
+    else if (Application.State.ThirdPressed) {
+        if (target === WG)
+            tool.OnMousemoveWorkSpaceMouseKey2Down(event);
+        else if (target.className === "layer")
+            tool.OnMousemoveCanvasMouseKey2Down(event);
+    }
+    else if (Application.State.RightPressed) {
+        if (target === WG)
+            tool.OnMousemoveWorkSpaceMouseKey3Down(event);
+        else if (target.className === "layer")
+            tool.OnMousemoveCanvasMouseKey3Down(event);
+    }
 }
 function mouseScroll(event) {
     event = event || window.event;
@@ -89,10 +109,10 @@ function mouseHelper(e)
     var helper = document.getElementById("mouseHelper") || document.createElement("div");
     helper.id = "mouseHelper";
     document.body.appendChild(helper);
-helper.innerHTML = "";
+    helper.innerHTML = "";
     var state = Application.State;
     /*for (var i in state)
-        helper.innerHTML+=i+" - "+state[i]+"<br>";*/
+     helper.innerHTML+=i+" - "+state[i]+"<br>";*/
     //helper.innerHTML = "i`m a helper";
 
     helper.style.top = e.pageY + 13 + "px";

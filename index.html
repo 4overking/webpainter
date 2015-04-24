@@ -11,15 +11,18 @@
         <script type="text/javascript" src="history.js" ></script>
         <script type="text/javascript" src="keyMapper.js" ></script>
         <script type="text/javascript" src="mouseMapper.js" ></script>
+        <script type="text/javascript" src="mainMenu.js " ></script>
         <script type="text/javascript" src="application.js" ></script>
     </head>
- <input type="file" id="file">
+    <body>
+        <div id="tools"></div>
+        <div id="mainMenu"></div>
+        <input type="file" id="openFile" style="display: none" accept="image/*">
         <input type="range" id="range"  min="1" max="255" step="5">
 
         <script>
-
             Application.Init();
-            Application.NewFile(800, 600, "");
+            Application.NewFile(500, 500, "");
 
             var rangeLoader = document.getElementById('range');
 
@@ -38,7 +41,7 @@
                 Application.LayerAlpha(this.value);
             });
             
-            var imageLoader = document.getElementById('file');
+            var imageLoader = document.getElementById('openFile');
             imageLoader.addEventListener('change', handleImage, false);
             function handleImage(event) {
                 event = event || window.event;
@@ -57,4 +60,5 @@
                 }
             }
         </script>
+    </body>
 </html>

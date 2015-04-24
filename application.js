@@ -7,7 +7,7 @@ Application =
             ActiveFile: false,
             ActiveLayer: false,
             ActiveLayerContext: false,
-            ActiveTool: new ITool,
+            ActiveTool: Line, //new ITool,
             layerCouter: 0,
             Init: function ()
             {
@@ -17,8 +17,8 @@ Application =
                 workground.id = "WorkGround";
                 this.WorkGround = workground;
                 document.body.appendChild(workground);
-                this.Tools.TestTool = Tools.drawText;
-
+                this.Menu.Load();
+                this.Tools.Load();
             },
             hideActiveFileFromWorkground: function ()
             {
@@ -83,7 +83,6 @@ Application =
                         wFill = (wFill) ? false : true;
                     }
                     return layer;
-
                 }
                 ;
                 if (!width || !height) {
@@ -98,7 +97,6 @@ Application =
                 file.style.height = height + "px";
                 file.width = width;
                 file.height = height;
-
                 this.Files.push(file);
                 this.ActiveFile = file;
                 this.WorkGround.appendChild(file);
@@ -114,7 +112,6 @@ Application =
                     {
                         this.ActiveLayerContext.fillStyle = bg;
                         this.ActiveLayerContext.fillRect(0, 0, width, height);
-
                     }
                 }
 
@@ -140,7 +137,6 @@ Application =
 
                 var canvas = (id) ? this.ActiveFile.layers[id] : this.ActiveLayer;
                 canvas.style.opacity = alpha / 250;
-
             },
             MergeLayer: function ()
             {
@@ -172,7 +168,6 @@ Application =
                     alpha = alpha || 1;
                     ctx.globalAlpha = alpha;
                     ctx.drawImage(layers[i], 0, 0);
-
                 }
                 return merge;
             },
@@ -191,7 +186,6 @@ Application =
                             var level = Application.ActiveFile.History.level;
                             if (level !== 1) {
                                 level--;
-
                                 Application.ActiveFile.History.level = {"length": level};
                                 this.UpdateLayer(Application.ActiveFile.History.GetLevel(level));
                             }
@@ -227,30 +221,6 @@ Application =
                                 var newLayer = stack[i];
                                 file.appendChild(newLayer);
                             }
-                            /*for (var i in fileLayers)
-                             {
-                             var layerPosition = find(fileLayers, layer);
-                             if (layerPosition < 0)
-                             {
-                             //get from heap
-                             //console.log("get from heap");
-                             }
-                             else if (layerPosition !== parseInt(i))
-                             {
-                             
-                             //moved layer
-                             //  console.log("moved layer");
-                             }
-                             else
-                             {
-                             
-                             // console.log("all OK");//что-то всё Слишком ОК
-                             }
-                             Application.ActiveFile.History.heap.appendChild(fileLayers[i]);
-                             Application.ActiveFile.appendChild(layer);
-                             }*/
-                            //СЛОИИИ
-                            //проверку на существование слоя и ЕГО УДАЛЕНИЕ!!!!
                             var ctx = level.layer.getContext("2d");
                             var data = level.layerData;
                             ctx.putImageData(data, 0, 0);
@@ -277,6 +247,70 @@ Application =
                         }
 
                     },
+            Menu:
+                    {
+                        Load: function () {
+                            var mnu = createMenu(mainMenu, "");
+                            mnu.className = "main_menu";
+                            mnu.onclick = null;
+                            document.getElementById("mainMenu").appendChild(mnu);
+                            
+                            for(var i =0; i< mnu.childElementCount;i++)
+                            {
+                               mnu.childNodes[i].className = "firstMenuLevel";
+                            }
+
+                            /*********************menu maker************************/
+                            function createMenu(menu, name)
+                            {
+
+                                var ul = document.createElement("ul");
+                                for (var i in menu)
+                                {
+                                    var li = document.createElement("li");
+                                    if (typeof (menu[i]) === "function") {
+                                        li.innerHTML = '<a href="#">' + i + '</a>';
+                                        li.onclick = menu[i];
+                                    }
+                                    else
+                                    {
+                                        li.innerHTML = '<a href="#">' + i + '</a>';
+                                        li.appendChild(createMenu(menu[i], i));
+                                    }
+                                    ul.appendChild(li)
+
+                                }
+                                return ul;
+                            }
+                            /**************************menu view handler*****************/
+                            /*function menuHandler(event){
+                                event = event ||window.event;
+                                var li = event.target.parentNode
+                                if(li.className ==="firstMenuLevel")
+                                {
+                                    console.log(li);
+                                }
+                            }*/
+
+                        }
+                    },
+           Tools:{
+               Load:function(){
+                   var tools = document.getElementById("tools");
+                   for(var i in Tools)
+                   {
+                       var tool = document.createElement("div");
+                       tool.className="tool";
+                       tool.innerHTML = Tools[i].Name;
+                       tool.thisTool = Tools[i];
+                       tool.onclick = function(){
+                           Application.ActiveTool = this.thisTool;
+                       }
+                       tools.appendChild(tool);
+                   }
+                   
+               }
+           },
             State:
                     {
                         CtrlPressed: false,
@@ -296,7 +330,6 @@ Application =
                 var colorStack = ["tomato", "chartreuse", " #4169E0", "gold", "orange", "#00BFFF", "magenta",
                     "#B22222", " #FF8C00", "#7CFC00", "#00FF00", " #1E90FF", " #9932CC", "#808080"];
                 var colors = colorStack.length;
-
                 edge = edge || 10;
                 var wFill = false;
                 for (var i = 0; i < 6; i++) {
