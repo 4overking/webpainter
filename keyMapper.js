@@ -30,16 +30,16 @@ function keyMapperDown(event)
 
     }
 
-   // console.log(event.keyCode);
+ //   console.log(event.keyCode);
 }
 
 function keyMapperUp (event)
 {
     event = event || window.event;
         /***************Handle Application.State.Buttons*******************/
-    if(event.ctrlKey)
+    if(event.keyCode == 17)
         Application.State.CtrlPressed = false;
-    if(event.altKey)
+    if(event.keyCode == 18)
         Application.State.AltPressed = false;
     if(event.keyCode == 32)
         Application.State.SpacePressed = false;

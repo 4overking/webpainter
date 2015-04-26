@@ -9,6 +9,8 @@ Application =
             ActiveLayerContext: false,
             ActiveTool: Line, //new ITool,
             layerCouter: 0,
+            ForegroundColor: "#000000",
+            BackgroundColor: "#004cb3",
             Init: function ()
             {
 
@@ -244,8 +246,18 @@ Application =
                         getRandomInt: function (min, max)
                         {
                             return Math.floor(Math.random() * (max - min + 1)) + min;
+                        },
+                        hexToRgb: function (hex) {
+                            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                            return result ? {
+                                R: parseInt(result[1], 16),
+                                G: parseInt(result[2], 16),
+                                B: parseInt(result[3], 16)
+                            } : null;
+                        },
+                        rgbToHex: function (r, g, b) {
+                            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
                         }
-
                     },
             Menu:
                     {
@@ -254,10 +266,10 @@ Application =
                             mnu.className = "main_menu";
                             mnu.onclick = null;
                             document.getElementById("mainMenu").appendChild(mnu);
-                            
-                            for(var i =0; i< mnu.childElementCount;i++)
+
+                            for (var i = 0; i < mnu.childElementCount; i++)
                             {
-                               mnu.childNodes[i].className = "firstMenuLevel";
+                                mnu.childNodes[i].className = "firstMenuLevel";
                             }
 
                             /*********************menu maker************************/
@@ -284,33 +296,47 @@ Application =
                             }
                             /**************************menu view handler*****************/
                             /*function menuHandler(event){
-                                event = event ||window.event;
-                                var li = event.target.parentNode
-                                if(li.className ==="firstMenuLevel")
-                                {
-                                    console.log(li);
-                                }
-                            }*/
+                             event = event ||window.event;
+                             var li = event.target.parentNode
+                             if(li.className ==="firstMenuLevel")
+                             {
+                             console.log(li);
+                             }
+                             }*/
 
                         }
                     },
-           Tools:{
-               Load:function(){
-                   var tools = document.getElementById("tools");
-                   for(var i in Tools)
-                   {
-                       var tool = document.createElement("div");
-                       tool.className="tool";
-                       tool.innerHTML = Tools[i].Name;
-                       tool.thisTool = Tools[i];
-                       tool.onclick = function(){
-                           Application.ActiveTool = this.thisTool;
-                       }
-                       tools.appendChild(tool);
-                   }
-                   
-               }
-           },
+            Tools:{
+                Load: function () {
+                    var tools = document.getElementById("tools");
+                    for (var i in Tools)
+                    {
+                        var tool = document.createElement("div");
+                        tool.className = "tool";
+                        // tool.innerHTML = Tools[i].Name;
+                        tool.thisTool = Tools[i];
+                        tool.style.background = "url(images/tools/" + Tools[i].Name + ".png)";
+                        tool.onclick = function () {
+                            Application.ActiveTool = this.thisTool;
+                        }
+                        tools.appendChild(tool);
+                    }
+                    /*********Color selection********/
+                    var FirstColor = document.getElementById("colorFirst");
+                    var FirstButton = document.getElementById("colorSlectorFirst");
+                    var SecondColor = document.getElementById("colorSecond");
+                    var SecondButton = document.getElementById("colorSlectorSecond");
+                    FirstColor.onchange = function () {
+                       FirstButton.style.backgroundColor = Application.ForegroundColor = FirstColor.value;
+                    };
+                    FirstButton.style.backgroundColor = Application.ForegroundColor = FirstColor.value;
+
+                    SecondColor.onchange = function () {
+                        SecondButton.style.backgroundColor = Application.BackgroundColor = SecondColor.value;
+                    };
+                    SecondButton.style.backgroundColor = Application.BackgroundColor = SecondColor.value;
+                }
+            },
             State:
                     {
                         CtrlPressed: false,
