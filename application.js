@@ -348,7 +348,8 @@ Application =
                         RightPressed: false,
                         ThirdPressed: false,
                         StatXY: [],
-                        EndXY: []
+                        EndXY: [],
+                        MoveXY:[]
 
                     },
             TestDraw: function (edge) {

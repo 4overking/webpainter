@@ -2,22 +2,26 @@
 document.onmousedown = mouseDownKey;
 document.onmouseup = mouseUpKey;
 document.onmousemove = mouseMove;
-document.onscroll = mouseScroll;
+document.onwheel = mouseScroll;
 
 function mouseDownKey(event) {
     event = event || window.event;
-    var target = event.toElement;
+    var target = (event.toElement == undefined) ?  event.target:event.toElement;
+	event.preventDefault();
+	event.stopPropagation();
     var WG = Application.WorkGround;
     var tool = Application.ActiveTool;
     Application.State.EndXY = [];
-    Application.State.StatXY = [event.offsetX, event.offsetY];
+    Application.State.MoveXY = [];
+    var x = (event.offsetX == undefined) ? event.layerX : event.offsetX;
+    var y = (event.offsetY == undefined )? event.layerY : event.offsetY;
+    Application.State.StatXY = [x, y];
     switch (event.which) {
         case 1 :
             if (target === WG)
                 tool.OnWorkSpaceMouseKeyDown(event);
             else if (target.className === "layer")
                 tool.OnCanvasMouseKeyDown(event);
-            //console.log(event.offsetX, event.offsetY);
             Application.State.LeftPressed = true;
             break;
         case 2 :
@@ -38,14 +42,18 @@ function mouseDownKey(event) {
             break;
     }
     //event.which==1,2,3 левая, средняя, правая
-    //console.log(event);
 }
 function mouseUpKey(event) {
     event = event || window.event;
-    var target = event.toElement;
+	event.preventDefault();
+	event.stopPropagation();
+    var target = (event.toElement == undefined) ?  event.target:event.toElement;
     var WG = Application.WorkGround;
     var tool = Application.ActiveTool;
-    Application.State.EndXY = [event.offsetX, event.offsetY];
+    var x = event.offsetX == undefined ? event.layerX : event.offsetX;
+    var y = event.offsetY == undefined ? event.layerY : event.offsetY;
+    Application.State.EndXY = [x, y];
+    
     switch (event.which) {
         case 1 :
             if (target === WG)
@@ -59,7 +67,7 @@ function mouseUpKey(event) {
             if (target === WG)
                 tool.OnWorkSpaceMouse2KeyUp(event);
             else if (target.className === "layer")
-                ctool.OnCanvasMouse2KeyUp(event);
+                tool.OnCanvasMouse2KeyUp(event);
 
             Application.State.ThirdPressed = false;
             break;
@@ -76,33 +84,36 @@ function mouseUpKey(event) {
 }
 function mouseMove(event) {
     event = event || window.event;
-    var target = event.toElement;
+    var target = (event.toElement == undefined) ?  event.target:event.toElement;
     var WG = Application.WorkGround;
     var tool = Application.ActiveTool;
-
+    var x = event.offsetX == undefined ? event.layerX : event.offsetX;
+    var y = event.offsetY == undefined ? event.layerY : event.offsetY;
+    
     if (Application.State.LeftPressed) {
         if (target === WG)
             tool.OnMousemoveWorkSpaceMouseKeyDown(event);
         else if (target.className === "layer")
             tool.OnMousemoveCanvasMouseKeyDown(event);
+        Application.State.MoveXY = [x, y];
     }
     else if (Application.State.ThirdPressed) {
         if (target === WG)
             tool.OnMousemoveWorkSpaceMouseKey2Down(event);
         else if (target.className === "layer")
             tool.OnMousemoveCanvasMouseKey2Down(event);
+        Application.State.MoveXY = [x, y];
     }
     else if (Application.State.RightPressed) {
         if (target === WG)
             tool.OnMousemoveWorkSpaceMouseKey3Down(event);
         else if (target.className === "layer")
             tool.OnMousemoveCanvasMouseKey3Down(event);
+        Application.State.MoveXY = [x, y];  
     }
 }
 function mouseScroll(event) {
     event = event || window.event;
-
-    // console.log(event);
 }
 function mouseHelper(e)
 {

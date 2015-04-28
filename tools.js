@@ -7,125 +7,61 @@
 /*********************FLOOD FILL TOOL********************************************/
 var Fill = new ITool();
 Fill.Name = "FillBucket";
-Fill.OnCanvasMouseKeyUp = function (e) {
-   // var fillColor = {R: 255, G: 125, B: 0, O: 255};
-    var fillColor = Application.Helpers.hexToRgb(Application.ForegroundColor);
-        fillColor.O = 255;
-    var sensitivity = 100;
-    var ctx = Application.ActiveLayerContext;
-    var width = Application.ActiveFile.width;
-    var height = Application.ActiveFile.height;
-    var imageData = ctx.getImageData(0, 0, width, height);
+Fill.OnCanvasMouseKeyUp = function () {
+    var context = Application.ActiveLayerContext;
+    var W = Application.ActiveFile.width;
+    var H = Application.ActiveFile.height;
+    var x = Application.State.EndXY[0], y = Application.State.EndXY[1];
+    var color_to = Application.Helpers.hexToRgb(Application.ForegroundColor);
+
+    color_to.O = 255;
+    var sensitivity = 10;
+    var img = context.getImageData(0, 0, W, H);
+    var imgData = img.data;
+    var k = ((y * (img.width * 4)) + (x * 4));
+    var dx = [0, -1, +1, 0];
+    var dy = [-1, 0, 0, +1];
+    var color_from = {
+        R: imgData[k + 0],
+        G: imgData[k + 1],
+        B: imgData[k + 2],
+        O: imgData[k + 3]
+    }
+    if (color_from.R == color_to.R &&
+            color_from.G == color_to.G &&
+            color_from.B == color_to.B &&
+            color_from.O == color_to.O)
+        return false;
     var stack = [];
-    stack.Add = function (pxl)
-    {
-        this.push(pxl);
-    };
-    var pixel = [Application.State.EndXY[0], Application.State.EndXY[1]];
-    var masterColor = new color(getNoPixel(pixel[0], pixel[1]));
-    //if same color return
-    if (equalToFC(pixel[0], pixel[1]))
-    {
-        return;
-    }
-    stack.Add(pixel);
+    stack.push(x);
+    stack.push(y);
+    while (stack.length > 0) {
+        var curPointY = stack.pop();
+        var curPointX = stack.pop();
+        for (var i = 0; i < 4; i++) {
+            var nextPointX = curPointX + dx[i];
+            var nextPointY = curPointY + dy[i];
+            if (nextPointX < 0 || nextPointY < 0 || nextPointX >= W || nextPointY >= H)
+                continue;
+            var k = (nextPointY * W + nextPointX) * 4;
+            if (Math.abs(imgData[k + 0] - color_from.R) <= sensitivity &&
+                    Math.abs(imgData[k + 1] - color_from.G) <= sensitivity &&
+                    Math.abs(imgData[k + 2] - color_from.B) <= sensitivity &&
+                    Math.abs(imgData[k + 3] - color_from.O) <= sensitivity) {
+                imgData[k + 0] = color_to.R;
+                imgData[k + 1] = color_to.G;
+                imgData[k + 2] = color_to.B;
+                imgData[k + 3] = color_to.O;
 
-    while (stack.length > 0)
-    {
-        var pixel = stack.pop();
-        if (pixel[0] < 0 || pixel[0] >= width)
-            continue;
-        if (pixel[1] < 0 || pixel[1] >= height)
-            continue;
-        var point = getNoPixel(pixel[0], pixel[1]);
-        var pointColor = new color(getNoPixel(pixel[0], pixel[1]));
-
-        if (equalToMC(pixel[0], pixel[1]))
-
-        {
-            imageData.data[point] = fillColor.R;
-            imageData.data[point + 1] = fillColor.G;
-            imageData.data[point + 2] = fillColor.B;
-            imageData.data[point + 3] = fillColor.O;
-
-            stack.Add([
-                pixel[0] - 1,
-                pixel[1]
-            ]);
-            stack.Add([
-                pixel[0] + 1,
-                pixel[1]
-            ]);
-            stack.Add([
-                pixel[0],
-                pixel[1] - 1
-            ]);
-            stack.Add([
-                pixel[0],
-                pixel[1] + 1
-            ]);
-            stack.Add([
-                pixel[0] - 1,
-                pixel[1] - 1
-            ]);
-            stack.Add([
-                pixel[0] + 1,
-                pixel[1] + 1
-            ]);
-            stack.Add([
-                pixel[0] + 1,
-                pixel[1] - 1
-            ]);
-            stack.Add([
-                pixel[0] - 1,
-                pixel[1] + 1
-            ]);
+                stack.push(nextPointX);
+                stack.push(nextPointY);
+            }
         }
     }
-    function getNoPixel(x, y) {
-        return ((x * 4) + (width * y * 4) + 4);
-    }
-    function color(pos) {
-        this.R = imageData.data[pos];
-        this.G = imageData.data[pos + 1];
-        this.B = imageData.data[pos + 2];
-        this.O = imageData.data[pos + 3];
-    }
-    function equalToMC(X, Y)
-    {
-        var testColor = new color(getNoPixel(X, Y));
-        if (
-                masterColor.R - sensitivity <= testColor.R && testColor.R <= masterColor.R + sensitivity &&
-                masterColor.G - sensitivity <= testColor.G && testColor.G <= masterColor.G + sensitivity &&
-                masterColor.B - sensitivity <= testColor.B && testColor.B <= masterColor.B + sensitivity &&
-                masterColor.O - sensitivity <= testColor.O && testColor.O <= masterColor.O + sensitivity
-                )
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    function equalToFC(X, Y)
-    {
-        var testColor = new color(getNoPixel(X, Y));
-        if (fillColor.R === testColor.R &&
-                fillColor.G === testColor.G &&
-                fillColor.B === testColor.B &&
-                fillColor.O === testColor.O)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    ctx.putImageData(imageData, 0, 0);
+    context.putImageData(img, 0, 0);
     Application.ActiveFile.History.level++;
 };
+
 
 /*********************PENCIL TOOL********************************************/
 var Line = new ITool();
@@ -137,9 +73,11 @@ Line.OnMousemoveCanvasMouseKeyDown = function (e) {
             y: p1.y + (p2.y - p1.y) / 2
         };
     }
+    var x = Application.State.MoveXY[0];
+    var y = Application.State.MoveXY[1];
     this.points.push({
-        x: (Application.State.ShiftPressed) ? this.points[this.points.length - 1].x : e.offsetX,
-        y: (Application.State.CtrlPressed) ? this.points[this.points.length - 1].y : e.offsetY
+        x: (Application.State.ShiftPressed) ? this.points[this.points.length - 1].x : x,
+        y: (Application.State.CtrlPressed) ? this.points[this.points.length - 1].y : y
     });
     var p1 = this.points[0];
     var p2 = this.points[1];
@@ -160,8 +98,10 @@ Line.OnMousemoveCanvasMouseKeyDown = function (e) {
 Line.OnCanvasMouseKeyDown = function (e) {
     this.points = [];
     Application.ActiveLayerContext.strokeStyle = Application.ForegroundColor;
-    Application.ActiveFile.style.cursor = "default";
-    this.points.push({x: e.offsetX, y: e.offsetY});
+    Application.ActiveFile.style.cursor = "default";    
+    var x = Application.State.StatXY[0];
+    var y = Application.State.StatXY[1];
+    this.points.push({x: x, y: y});
     Application.ActiveLayerContext.lineWidth = 1;
     Application.ActiveLayerContext.lineJoin = Application.ActiveLayerContext.lineCap = 'round';
 
@@ -174,18 +114,123 @@ Line.OnCanvasMouseKeyUp = function (e) {
 /***************************GRADIENT TOOL********************************************/
 var Gradient = new ITool();
 Gradient.Name = "Gradient";
-Gradient.OnCanvasMouseKeyDown = function (e) {
-    this.Start = {x: e.offsetX, y: e.offsetY};
-
-}
 Gradient.OnCanvasMouseKeyUp = function (e) {
-    var End = {x: e.offsetX, y: e.offsetY};
-    var grd = Application.ActiveLayerContext.createLinearGradient(this.Start.x, this.Start.y, End.x, End.y);
+    var Start = {x: Application.State.StatXY[0], y: Application.State.StatXY[1]};
+    var End = {x: Application.State.EndXY[0], y: Application.State.EndXY[1]};
+    var grd = Application.ActiveLayerContext.createLinearGradient(Start.x, Start.y, End.x, End.y);
     grd.addColorStop(0, Application.ForegroundColor);
     grd.addColorStop(1, Application.BackgroundColor);
     Application.ActiveLayerContext.fillStyle = grd;
     Application.ActiveLayerContext.fillRect(0, 0, Application.ActiveLayer.width, Application.ActiveLayer.height);
     this.Start = null;
-Application.ActiveFile.History.level++;
+    Application.ActiveFile.History.level++;
 }
 
+/*****************************HAND TOOL******************************************************/
+var Hand = new ITool();
+Hand.Name = "Hand";
+Hand.OnCanvasMouseKeyDown = Hand.OnWorkSpaceMouseKeyDown = function (e)
+{
+}
+Hand.OnMousemoveCanvasMouseKeyDown = Hand.OnMousemoveWorkSpaceMouseKeyDown = function (e)
+{
+    var startPos = {x: Application.State.StatXY[0], y: Application.State.StatXY[1]};
+    var newPos = {x: Application.State.MoveXY[0], y: Application.State.MoveXY[1]};
+    var X = startPos.x - newPos.x;
+    var Y = startPos.y - newPos.y;
+    window.scrollBy(X, Y);
+}
+Hand.OnCanvasMouseKeyUp = Hand.OnWorkSpaceMouseKeyUp = function (e) {
+    this.startPos = null;
+}
+
+
+
+
+
+/***************************ZOOM TOOL **********************************/
+var Zoom = new ITool();
+Zoom.Name = "Zoom";
+Zoom.ZoomVal = 100;
+Zoom.OnCanvasMouseKeyUp = function () {
+    this.ZoomVal;
+    var recalc = 50, scroll; //range 50 - 1000
+    if (recalc != undefined) {
+        //zoom-in or zoom-out
+        if (recalc == 1 || recalc == -1) {
+            var step = 100;
+            if (this.ZoomVal <= 100 && recalc < 0)
+                step = 10;
+            if (this.ZoomVal < 100 && recalc > 0)
+                step = 10;
+            if (recalc * step + this.ZoomVal > 0) {
+                this.ZoomVal = this.ZoomVal + recalc * step;
+                if (this.ZoomVal > 100 && this.ZoomVal < 200)
+                    this.ZoomVal = 100;
+            }
+        }
+        //zoom using exact value
+        else
+            this.ZoomVal = parseInt(recalc);
+        CON.calc_preview_auto();
+    }
+    document.getElementById("zoom_nr").innerHTML = ZOOM;
+    document.getElementById("zoom_range").value = ZOOM;
+
+    //change scale and repaint
+    document.getElementById('canvas_back').style.width = round(WIDTH * ZOOM / 100) + "px";
+    document.getElementById('canvas_back').style.height = round(HEIGHT * ZOOM / 100) + "px";
+    for (var i in LAYERS) {
+        document.getElementById(LAYERS[i].name).style.width = round(WIDTH * ZOOM / 100) + "px";
+        document.getElementById(LAYERS[i].name).style.height = round(HEIGHT * ZOOM / 100) + "px";
+    }
+    document.getElementById('canvas_front').style.width = round(WIDTH * ZOOM / 100) + "px";
+    document.getElementById('canvas_front').style.height = round(HEIGHT * ZOOM / 100) + "px";
+
+    //check main resize corners
+    if (ZOOM != 100) {
+        document.getElementById('resize-w').style.display = "none";
+        document.getElementById('resize-h').style.display = "none";
+        document.getElementById('resize-wh').style.display = "none";
+    }
+    else {
+        document.getElementById('resize-w').style.display = "block";
+        document.getElementById('resize-h').style.display = "block";
+        document.getElementById('resize-wh').style.display = "block";
+    }
+
+    if (scroll != undefined)
+        CON.scroll_window();
+    DRAW.redraw_preview();
+};
+/***************************COLOR PROBE TOOL **********************************/
+var ColorProbe = new ITool();
+ColorProbe.Name = "ColorProbe";
+ColorProbe.detect = function () {
+    var x = Application.State.EndXY[0];
+    var y = Application.State.EndXY[1];
+    var W = Application.ActiveFile.width;
+    var H = Application.ActiveFile.height;
+    var img = Application.ActiveLayerContext.getImageData(0, 0, W, H);
+    var imgData = img.data;
+    var k = ((y * (img.width * 4)) + (x * 4));
+     return{
+        R: imgData[k + 0],
+        G: imgData[k + 1],
+        B: imgData[k + 2],
+        O: imgData[k + 3]
+    };
+
+}
+ColorProbe.OnCanvasMouseKeyUp = function ()
+{
+    var color = this.detect();
+    document.getElementById("colorSlectorFirst").style.backgroundColor = Application.ForegroundColor =
+    document.getElementById("colorFirst").value = Application.Helpers.rgbToHex(color.R, color.G, color.B);
+}
+ColorProbe.OnCanvasMouse3KeyUp = function ()
+{
+     var color = this.detect();
+    document.getElementById("colorSlectorSecond").style.backgroundColor = Application.BackgroundColor =
+    document.getElementById("colorSecond").value = Application.Helpers.rgbToHex(color.R, color.G, color.B);
+}

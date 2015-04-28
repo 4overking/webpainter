@@ -15,17 +15,19 @@ function  ITool() {
             this.OnCanvasMouse3KeyUp =
             this.OnWorkSpaceMouse3KeyUp =
             this.OnCanvasMouse3KeyDown =
-            this.OnWorkSpaceMouse3KeyDown = 
-            
-            
+            this.OnWorkSpaceMouse3KeyDown =
+            this.OnMousemoveCanvasMouseKey3Down =
+            this.OnMousemoveWorkSpaceMouseKey3Down =
+            this.OnMousemoveCanvasMouseKey2Down =
+            this.OnMousemoveWorkSpaceMouseKey2Down =
             this.OnMousemoveWorkSpaceMouseKeyDown =
             this.OnMousemoveCanvasMouseKeyDown =
             this.OnMousemoveWorkSpaceMouse2KeyDown =
             this.OnMousemoveCanvasMouse2KeyDown =
             this.OnMousemoveWorkSpaceMouse3KeyDown =
-            this.OnMousemoveCanvasMouse3KeyDown 
+            this.OnMousemoveCanvasMouse3KeyDown
             = function (e) {
                 //console.log(event);
             };
-    this.Name = "toolNo_"+Tools.length;
+    this.Name = "toolNo_" + Tools.length;
 }
