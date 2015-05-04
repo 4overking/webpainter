@@ -89,27 +89,25 @@ function mouseMove(event) {
     var tool = Application.ActiveTool;
     var x = event.offsetX == undefined ? event.layerX : event.offsetX;
     var y = event.offsetY == undefined ? event.layerY : event.offsetY;
+    Application.State.MoveXY = [x, y];
     
     if (Application.State.LeftPressed) {
         if (target === WG)
             tool.OnMousemoveWorkSpaceMouseKeyDown(event);
         else if (target.className === "layer")
             tool.OnMousemoveCanvasMouseKeyDown(event);
-        Application.State.MoveXY = [x, y];
     }
     else if (Application.State.ThirdPressed) {
         if (target === WG)
             tool.OnMousemoveWorkSpaceMouseKey2Down(event);
         else if (target.className === "layer")
             tool.OnMousemoveCanvasMouseKey2Down(event);
-        Application.State.MoveXY = [x, y];
     }
     else if (Application.State.RightPressed) {
         if (target === WG)
             tool.OnMousemoveWorkSpaceMouseKey3Down(event);
         else if (target.className === "layer")
             tool.OnMousemoveCanvasMouseKey3Down(event);
-        Application.State.MoveXY = [x, y];  
     }
 }
 function mouseScroll(event) {

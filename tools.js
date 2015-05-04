@@ -1,3 +1,5 @@
+/* global Application */
+
 //*******Disclamer*******//
 /*
  Инструменты всегда работают с активным файлом и активным слоем
@@ -98,7 +100,7 @@ Line.OnMousemoveCanvasMouseKeyDown = function (e) {
 Line.OnCanvasMouseKeyDown = function (e) {
     this.points = [];
     Application.ActiveLayerContext.strokeStyle = Application.ForegroundColor;
-    Application.ActiveFile.style.cursor = "default";    
+    Application.ActiveFile.style.cursor = "default";
     var x = Application.State.StatXY[0];
     var y = Application.State.StatXY[1];
     this.points.push({x: x, y: y});
@@ -143,9 +145,6 @@ Hand.OnMousemoveCanvasMouseKeyDown = Hand.OnMousemoveWorkSpaceMouseKeyDown = fun
 Hand.OnCanvasMouseKeyUp = Hand.OnWorkSpaceMouseKeyUp = function (e) {
     this.startPos = null;
 }
-
-
-
 
 
 /***************************ZOOM TOOL **********************************/
@@ -214,7 +213,7 @@ ColorProbe.detect = function () {
     var img = Application.ActiveLayerContext.getImageData(0, 0, W, H);
     var imgData = img.data;
     var k = ((y * (img.width * 4)) + (x * 4));
-     return{
+    return{
         R: imgData[k + 0],
         G: imgData[k + 1],
         B: imgData[k + 2],
@@ -226,11 +225,134 @@ ColorProbe.OnCanvasMouseKeyUp = function ()
 {
     var color = this.detect();
     document.getElementById("colorSlectorFirst").style.backgroundColor = Application.ForegroundColor =
-    document.getElementById("colorFirst").value = Application.Helpers.rgbToHex(color.R, color.G, color.B);
+            document.getElementById("colorFirst").value = Application.Helpers.rgbToHex(color.R, color.G, color.B);
 }
 ColorProbe.OnCanvasMouse3KeyUp = function ()
 {
-     var color = this.detect();
+    var color = this.detect();
     document.getElementById("colorSlectorSecond").style.backgroundColor = Application.BackgroundColor =
-    document.getElementById("colorSecond").value = Application.Helpers.rgbToHex(color.R, color.G, color.B);
+            document.getElementById("colorSecond").value = Application.Helpers.rgbToHex(color.R, color.G, color.B);
 }
+
+
+/*********************RECTANGLE TOOL*************************/
+var Rectangle = new ITool();
+Rectangle.Name = "Rectangle";
+Rectangle.OnCanvasMouseKeyDown = function () {
+    var width = Application.ActiveFile.width;
+    var height = Application.ActiveFile.height;
+    this.data = Application.ActiveLayerContext.getImageData(0, 0, width, height);
+};
+Rectangle.OnMousemoveCanvasMouseKeyDown = function () {
+    if (this.data)
+    {
+        Application.ActiveLayerContext.putImageData(this.data, 0, 0);
+    }
+    Application.ActiveLayerContext.beginPath();
+    Application.ActiveLayerContext.lineWidth = 1;//config
+    Application.ActiveLayerContext.strokeStyle = Application.ForegroundColor;
+    if (Application.State.AltPressed)
+    {
+        var x_start = Application.State.StatXY[0] - (Application.State.MoveXY[0] - Application.State.StatXY[0]);
+        var y_start = Application.State.StatXY[1] - (Application.State.MoveXY[1] - Application.State.StatXY[1]);
+        var width = Application.State.MoveXY[0] - x_start;
+        var height = Application.State.MoveXY[1] - y_start;
+    }
+    else
+    {
+        var x_start = Application.State.StatXY[0];
+        var y_start = Application.State.StatXY[1];
+        var width = Application.State.MoveXY[0] - x_start;
+        var height = Application.State.MoveXY[1] - y_start;
+    }
+    if (Application.State.ShiftPressed)
+    {
+        height = width;
+    }
+    Application.ActiveLayerContext.beginPath();
+    Application.ActiveLayerContext.rect(x_start, y_start, width, height);
+    Application.ActiveLayerContext.stroke();
+
+};
+Rectangle.OnCanvasMouseKeyUp = function ()
+{
+    this.data = null;
+    Application.ActiveFile.History.level++;
+};
+
+/****************CIRCLE TOOL ******************************/
+
+var Circle = new ITool();
+Circle.Name = "Circle";
+
+Circle.OnCanvasMouseKeyDown = function () {
+    var width = Application.ActiveFile.width;
+    var height = Application.ActiveFile.height;
+    this.data = Application.ActiveLayerContext.getImageData(0, 0, width, height);
+};
+Circle.OnMousemoveCanvasMouseKeyDown = function () {
+    if (this.data)
+    {
+        Application.ActiveLayerContext.putImageData(this.data, 0, 0);
+    }
+    Application.ActiveLayerContext.beginPath();
+    Application.ActiveLayerContext.lineWidth = 1;//config
+    Application.ActiveLayerContext.strokeStyle = Application.ForegroundColor;
+    var x_start = Application.State.StatXY[0];
+    var y_start = Application.State.StatXY[1];
+    var width = Application.State.MoveXY[0] - x_start;
+    var height = Application.State.MoveXY[1] - y_start;
+    var centerX, centerY;
+    var radius, w_ratio, h_ratio;
+    Application.ActiveLayerContext.save();
+
+    if (Application.State.ShiftPressed) {
+        if (width > height)
+            height = width;
+        else
+            width = height;
+    }
+    if (Application.State.AltPressed)
+    {
+        centerX = Application.State.StatXY[0];
+        centerY = Application.State.StatXY[1];
+    }
+    else
+    {
+        centerX = Application.State.StatXY[0] + width / 2;
+        centerY = Application.State.StatXY[1] + height / 2;
+    }
+    if (Math.abs(width) > Math.abs(height))
+    {
+        radius = Math.abs(height / 2);
+        h_ratio = 1;
+        w_ratio = width / height;
+        Application.ActiveLayerContext.translate(Application.ActiveLayerContext.width / w_ratio, Application.ActiveLayerContext.height / w_ratio);
+    }
+    else
+    {
+        radius = Math.abs(width / 2);
+        w_ratio = 1;
+        h_ratio = height / width;
+    }
+    if (Application.State.ShiftPressed) {
+        w_ratio = h_ratio = 1;
+    }
+
+    Application.ActiveLayerContext.scale(w_ratio, h_ratio);
+    Application.ActiveLayerContext.beginPath();
+    Application.ActiveLayerContext.arc(centerX / w_ratio, centerY / h_ratio, radius, 0, 2 * Math.PI, false);
+    Application.ActiveLayerContext.restore();
+    Application.ActiveLayerContext.stroke();
+
+};
+Circle.OnCanvasMouseKeyUp = function () {
+    this.data = null;
+    Application.ActiveFile.History.level++;
+};
+
+
+/****************ERASER TOOL ******************************/
+
+var Eraser = new ITool();
+Eraser.Name = "Eraser";

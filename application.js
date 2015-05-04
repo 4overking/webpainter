@@ -7,7 +7,7 @@ Application =
             ActiveFile: false,
             ActiveLayer: false,
             ActiveLayerContext: false,
-            ActiveTool: Line, //new ITool,
+            ActiveTool: Circle, //new ITool,
             layerCouter: 0,
             ForegroundColor: "#000000",
             BackgroundColor: "#004cb3",
@@ -213,7 +213,6 @@ Application =
                             var find = Application.Helpers.Find;
                             var file = Application.ActiveFile;
                             var fileLayers = file.getElementsByClassName('layer');
-                            console.log(level.isNewLayer || level.isNewLayerPosition);
                             for (var i = fileLayers.length; i > 0; i--)
                             {
                                 file.History.heap.appendChild(fileLayers[i - 1]);
